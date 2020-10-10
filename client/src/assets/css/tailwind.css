@@ -1,0 +1,64 @@
+@font-face {
+  font-family: "Work-Sans";
+  src: url("../fonts/WorkSans-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Circe";
+  src: url("../fonts/Circe Regular.ttf") format("truetype");
+}
+
+@tailwind utilities;
+@tailwind base;
+@tailwind components;
+
+h1 {
+  @apply text-2xl;
+}
+
+h2 {
+  @apply text-xl;
+}
+
+button {
+  outline: none;
+  outline-width: 0;
+}
+button:focus {
+  outline: none;
+}
+
+.b-btn {
+  @apply flex rounded-full px-3 py-3 justify-center items-center  bg-green-400 text-violet cursor-pointer  mx-3 ease-in duration-75;
+}
+
+.input {
+  @apply border-gray-300 bg-gray-100 border-2 py-4 px-5 rounded-lg mb-10 outline-none text-lg;
+}
+
+.label {
+  @apply font-semibold text-lg bg-gray-100 text-gray-600 absolute pointer-events-none ease-out duration-100;
+}
+
+.dashboard-sidemenu {
+  @apply flex justify-around items-center relative;
+}
+
+.dashboard-sidemenu-icons {
+  @apply text-violet rounded-full p-2 w-10 h-10 cursor-pointer;
+}
+
+.dashboard-sidemenu-items {
+  @apply capitalize text-gray-300 absolute w-32 left-3 pointer-events-none select-none;
+}
+
+.dashboard-heading {
+  @apply text-3xl font-semibold;
+}
+
+.h-40 {
+  height: 40vh;
+}
+
+.z-100 {
+  z-index: 100;
+}
