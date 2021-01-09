@@ -13,19 +13,33 @@
       @modal="openModal"
       :islogin="loggedIn"
     />
-    <BottomNav :length="inCart.length" @cart-clicked="showCart = true" />
+    <BottomNav :length="inCart.length" @filter-clicked="showFilters = true" @cart-clicked="showCart = true" />
 
     <div
       class="h-screen fixed w-full bg-black-700 z-50 opacity-75"
-      @click="showCart = modalOpen = detComp = false"
-      v-if="showCart || modalOpen || detComp"
+      @click="showCart = showFilters = modalOpen = detComp = false"
+      v-if="showCart || showFilters || modalOpen || detComp"
     ></div>
 
     <transition name="slidein">
       <div
-        class="fixed w-6/12 right-0 top-0 rounded-xl rounded-r-none bg-gradient-to-br from-teal-700 via-teal-500 to-teal-400 h-screen z-50 p-16"
+        class="fixed w-6/12 right-0 top-0 rounded-xl rounded-r-none bg-gradient-to-br from-green-700 via-green-500 to-green-400 text-white h-screen z-50 p-16"
+        v-if="showFilters"
+      >
+      <Filters />
+        
+      </div>
+    </transition>
+
+    <transition name="slidein">
+      <div
+      :class="{
+        'from-green-700 via-green-500 to-green-400' : !isCartEmpty || inCart.length > 0
+      }"
+        class="fixed w-6/12 right-0 top-0 rounded-xl rounded-r-none bg-gradient-to-br cart-bg text-white h-screen z-50 p-16"
         v-if="showCart"
       >
+      
         <Cart
           @close-cart="showCart = false"
           @delete-product="deleteInCart"
@@ -47,17 +61,17 @@
       </transition>
     </div>
     <div
-      class="min-h-screen text-pale px-8 gap-8 pt-48 bg-opacity-100 bg-black-700 flex relative z-30"
+      class="min-h-screen text-pale px-8 gap-8 pt-48 bg-opacity-100 bg-black-700 grid grid-cols-3 relative z-30"
     >
       <div
-        class="w-1/3 my-3 relative"
+        class="my-3 relative"
         v-for="(product, index) in products"
         :key="product.id"
       >
         <transition name="scaleUp">
           <span
             v-if="showMsg && index == showMsgIndex"
-            class="absolute top-0 -mt-5 left-0 bg-red-500 text-secondary px-4 py-2 m-3 rounded-full rounded-bl-none shadow-sm z-40"
+            class="absolute origin-bottom-left top-0 -mt-5 left-0 bg-red-500 text-secondary px-4 py-2 m-3 rounded-full rounded-bl-none shadow-sm z-50"
             >Double click on the image to open it</span
           >
         </transition>
@@ -155,6 +169,7 @@ import BottomNav from "@/components/topNav/BottomNav";
 import Register from "@/components/seller/Authentication";
 import DetailComponent from "./DetailComponent";
 import Cart from "./Cart";
+import Filters from "./Filters";
 import Slider from "./extras/Slider";
 import axios from "../axios-auth";
 
@@ -170,6 +185,7 @@ export default {
     Slider,
     DetailComponent,
     Cart,
+    Filters
   },
   data() {
     return {
@@ -178,6 +194,7 @@ export default {
       detComp: false,
       showMsg: false,
       showCart: false,
+      showFilters: false,
       showMsgIndex: 0,
       modalOpen: false,
       chosen: "",
@@ -187,6 +204,7 @@ export default {
       tags: [],
       inCart: [],
       cartIndex: [],
+      isCartEmpty: true,
     };
   },
   watch: {
@@ -220,6 +238,10 @@ export default {
     this.store.getters.inCart === null
       ? (this.inCart = [])
       : (this.inCart = this.store.getters.inCart);
+      const productsInCart = this.store.state.productsInCart;
+      if(productsInCart !== null){
+        this.isCartEmpty = productsInCart.length > 0 ? false : true;
+      }
     console.log(this.inCart);
   },
   updated() {
@@ -312,6 +334,7 @@ export default {
               pics.push(pic);
             });
             this.images.push(pics);
+            console.log(this.images);
             pics = [];
           });
           this.checkCart();
@@ -385,7 +408,7 @@ export default {
 
 .scaleUp-enter-active,
 .scaleUp-leave-active {
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .slidein-enter-active,
 .slidein-leave-active {
@@ -412,5 +435,12 @@ export default {
 }
 .z-more {
   z-index: 1000;
+}
+.bg-black-300{
+  background-color: rgb(14, 13, 13);
+}
+
+.cart-bg{
+  background-color: #E35330;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="fixed top-4 bg-black-700 z-40 flex justify-end w-full py-4 px-8">
-    <div class="b-btn">
+    <div @click="$emit('filter-clicked')" class="b-btn">
       <span>
         <svg
           class="w-6 h-6"

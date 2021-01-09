@@ -1,8 +1,13 @@
 <template>
+  <div
+    v-if="usrClick || dropdownClick"
+    @click="hideDropdowns"
+    class="fixed top-0 left-0 z-50 opacity-25 w-full h-screen bg-black"
+  ></div>
   <div class="select-none fixed z-50 w-screen font-body text-base">
     <nav class="shadow-md flex items-center py-4 justify-around">
       <div class="text-xl text-pale font-bold">n-Gelo</div>
-      <Search />
+      <Search :show-dropdown="dropdownClick" @cat-clicked="dropdownClick = !dropdownClick" />
 
       <div class="relative" v-if="isLogin">
         <div
@@ -47,22 +52,32 @@
             v-if="usrClick"
             class="absolute right-1 top-3 rounded-lg rounded-tr-none py-2 px-4 w-48 bg-gray-400"
           >
-            <ul class="flex flex-col w-full justify-end items-center">
-              <li class="text-lg">
-                Welcome,
-                <span class="font-semibold capitalize">{{ userName }}</span>
-              </li>
-              <hr class="mt-1 mb-4 w-2/3 border-gray-500" />
-              <router-link
-                :to="{ name: role + '_dashboard' }"
-                tag="li"
-                class="bg-red-500 text-pale py-2 px-3 mb-2 cursor-pointer"
-                >Go to Dashboard</router-link
+            <div class="relative">
+              <div
+                class="absolute top-0 right-0 rounded-sm w-6 h-6 bg-gray-400 transform -translate-y-4 z-10 rotate-45"
+              ></div>
+              <ul
+                class="flex relative z-40 flex-col w-full justify-end items-center"
               >
-              <li class="text-lg text-gray-800 cursor-pointer" @click="logout">
-                Logout
-              </li>
-            </ul>
+                <li class="text-lg">
+                  Welcome,
+                  <span class="font-semibold capitalize">{{ userName }}</span>
+                </li>
+                <hr class="mt-1 mb-4 w-2/3 border-gray-500" />
+                <router-link
+                  :to="{ name: role + '_dashboard' }"
+                  tag="li"
+                  class="bg-red-500 text-pale py-2 px-3 mb-2 cursor-pointer"
+                  >Go to Dashboard</router-link
+                >
+                <li
+                  class="text-lg text-gray-800 cursor-pointer"
+                  @click="logout"
+                >
+                  Logout
+                </li>
+              </ul>
+            </div>
           </div>
         </transition>
       </div>
@@ -101,6 +116,7 @@ export default {
     return {
       auth: false,
       usrClick: false,
+      dropdownClick: false,
       store: useStore(),
       userName: "",
       role: "",
@@ -118,6 +134,9 @@ export default {
     },
   },
   methods: {
+    hideDropdowns() {
+      this.usrClick = this.dropdownClick = false;
+    },
     openModal(name) {
       this.$emit("modal", name);
     },

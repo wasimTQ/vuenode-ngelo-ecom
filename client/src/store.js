@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
 // Wed Sep 16 2020 14:12:01 GMT+0530 (India Standard Time)
-// import axios from "./axios-auth";
+import axios from "./axios-auth";
 // import globalAxios from "axios";
 // import router from "./router";
 
@@ -13,6 +13,7 @@ export default createStore({
     userName: null,
     role: null,
     productsInCart: [],
+    dropdownOpen: false
   },
   getters: {
     user: (state) => state.user,
@@ -90,6 +91,7 @@ export default createStore({
       if (!token) {
         return;
       }
+      axios.defaults.headers.common['Authorization'] = token;
       const expirationDate = +localStorage.getItem("expirationDate");
       // const expTime = expirationDate.getTime();
       const now = new Date().getTime();

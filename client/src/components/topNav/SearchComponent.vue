@@ -25,21 +25,26 @@
       </span>
     </div>
     <transition name="fadeInDown" appear>
-      <div v-if="catClicked" class="absolute left-0 top-0">
-        <ul
-          class="select-none flex justify-around mt-12 z-0 rounded-lg bg-gray-200 px-10 py-4"
-        >
-          <li
-            class="flex flex-col relative"
-            v-for="(category, index) in categories"
-            :key="index"
+      <div v-if="showDropdown && catClicked" class="absolute left-0 top-0">
+        <div class="relative">
+          <div
+            class="absolute top-0 left-5 rounded-sm w-10 h-10 bg-gray-200 transform rotate-45"
+          ></div>
+          <ul
+            class="select-none flex justify-around mt-12 z-0 rounded-lg bg-gray-200 px-10 py-4"
           >
-            <div class="flex items-center">
-              <h2 class="font-semibold text-base">{{ category.title }}</h2>
-            </div>
-            <Dropdown v-if="category.subnav" :list="category" />
-          </li>
-        </ul>
+            <li
+              class="flex flex-col relative"
+              v-for="(category, index) in categories"
+              :key="index"
+            >
+              <div class="flex items-center">
+                <h2 class="font-semibold text-base">{{ category.title }}</h2>
+              </div>
+              <Dropdown v-if="category.subnav" :list="category" />
+            </li>
+          </ul>
+        </div>
       </div>
     </transition>
     <input
@@ -75,6 +80,12 @@ import Dropdown from "./Dropdown";
 
 export default {
   name: "app",
+  props: {
+    showDropdown: {
+      type: Boolean,
+      default: false
+    },
+  },
   components: {
     Dropdown,
   },
@@ -116,6 +127,7 @@ export default {
     },
     toggleCategories() {
       this.catClicked = !this.catClicked;
+      this.$emit('cat-clicked');
       this.categories.forEach((item) => {
         item.open = false;
       });

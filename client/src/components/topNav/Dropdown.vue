@@ -1,4 +1,5 @@
 <template>
+ 
   <ul class="rounded-lg bg-gray-200 px-4 py-3 w-1/5">
     <li
       class="flex items-center cursor-pointer mt-2 flex-wrap hover:text-blue-600 duration-150"

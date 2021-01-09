@@ -1,8 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const jwt = require('jsonwebtoken')
 
 const db = require("./connection");
+
+require('dotenv')
 
 db.authenticate()
   .then(() => console.log("Connected successfully"))
@@ -13,7 +16,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use("/api/products", require("./routes/Products"));
+
+app.use("/api/products",  require("./routes/Products"));
 app.use("/api/seller", require("./routes/Seller"));
 app.use("/api/buyer", require("./routes/Buyer"));
 app.use("/api/user", require("./routes/User"));

@@ -33,10 +33,10 @@ module.exports = {
         "25": "25vh",
       },
       borderRadius: {
-        xl: "25px",
+        xl: "15px",
       },
       height: {
-        large: "90vh",
+        large: "80vh",
       },
     },
   },

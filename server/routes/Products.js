@@ -3,11 +3,14 @@ const router = express.Router();
 const db = require("../connection");
 const multer = require("multer");
 const sequelize = require("sequelize");
+const stripe = require("stripe")(
+  "sk_test_51HduWsKsRbt0ZWXitYbezSZvl3Vp3sLee0oVF1XlrDgrP1mM1iEBr7vS59gJSMlIeCT6NXEhaCcFAn8jPuheKJI800DHvdWbiT"
+);
 
 const productModel = require("../models/ProductModel");
 const Seller = require("../models/SellerModel");
 
-const DIR = "/home/wasim21/Desktop/digi-commerce/e-commerce-app/client/static";
+const DIR = "/home/wasim/Desktop/digi-commerce/e-commerce-app/client/static";
 
 let mainFile;
 let previewFiles = [];
@@ -165,6 +168,39 @@ router.delete("/delete/:prod_id", async (req, res) => {
   }
 });
 
+// Adding to sold products
+router.post("/sold", async (req,res) =>  {
+  console.log(req.body);
+  const productList = JSON.parse(req.body.productList)
+
+  productList.forEach(async (product) => {
+    try {
+      const like = await db.query(
+        `INSERT INTO sold_products(user_id, prod_id, price, sold_at) VALUES (${
+          req.body.userId
+        }, ${product.id}, ${product.price}, ${Date.now()})`
+      );
+      res.status(200).send(true);
+    } catch (e) {
+      console.log(e);
+      res.status(400).send(e);
+    }
+  })
+})
+
+// Getting sold products
+router.get('/bought/:id', async (req, res) => {
+  try {
+    const productsBought = await db.query(
+      `SELECT * FROM sold_products INNER JOIN products ON sold_products.prod_id = products.id WHERE user_id = ${req.params.id}`
+    );
+    res.status(200).send(productsBought)
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+
 // Like a product
 router.post("/like", async (req, res) => {
   console.log(req.body);
@@ -230,6 +266,53 @@ router.get("/likedproducts/:user_id", async (req, res) => {
     console.log(e);
     res.status(400).send(e);
   }
+});
+
+// METHOD 1 - Going to Stripe checkout page
+router.post("/create-checkout-session", async (req, res) => {
+  let products = (sendProducts = req.body.products);
+  console.log(sendProducts);
+
+  let result = [];
+
+  products.forEach((product) => {
+    let show = {
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name: product.prod_name,
+        },
+        unit_amount: product.price * 100,
+      },
+      quantity: 1,
+    };
+    result.push(show);
+  });
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items: result,
+    mode: "payment",
+    success_url: `http://localhost:3000/api/products/sold`,
+    cancel_url: "http://localhost:8080",
+  });
+  console.log(session);
+
+  res.json({ id: session.id });
+});
+
+// METHOD 2 - Using stripe elements in Web
+router.post("/secret", async (req, res) => {
+  console.log(req.body);
+
+  const intent = await stripe.paymentIntents.create({                                                                                                 
+    amount: req.body.amount * 100,
+    currency: "inr",
+    payment_method_types: ["card"],                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+    // Verify your integration in this guide by including this parameter
+    metadata: { integration_check: "accept_a_payment" },
+  });
+  res.json({ client_secret: intent.client_secret });
 });
 
 module.exports = router;

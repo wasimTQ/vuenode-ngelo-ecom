@@ -84,7 +84,7 @@
         </transition>
       </div>
 
-      <div class="flex items-center mb-6 cursor-pointer">
+      <div v-if="registerAuth" class="flex items-center mb-6 cursor-pointer">
         <span
           @click="loginBuyer = false"
           :class="{ 'opacity-50': loginBuyer }"
