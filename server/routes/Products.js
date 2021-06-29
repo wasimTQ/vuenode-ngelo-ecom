@@ -4,7 +4,7 @@ const db = require("../connection");
 const multer = require("multer");
 const sequelize = require("sequelize");
 const stripe = require("stripe")(
-  "sk_test_51HduWsKsRbt0ZWXitYbezSZvl3Vp3sLee0oVF1XlrDgrP1mM1iEBr7vS59gJSMlIeCT6NXEhaCcFAn8jPuheKJI800DHvdWbiT"
+  "YOUR_STRIPE_KEY"
 );
 
 const productModel = require("../models/ProductModel");
